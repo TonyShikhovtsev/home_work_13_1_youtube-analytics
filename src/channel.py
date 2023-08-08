@@ -1,4 +1,7 @@
+import os
 import requests
+import json
+from googleapiclient.discovery import build
 
 class Channel:
     """Класс для ютуб-канала"""
@@ -7,24 +10,58 @@ class Channel:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.channel_id = channel_id
         self.api_key = "AIzaSyDHgpl7lB3wLwo17yG67V1zkWbZnmm5pWI"
+        self.title = ""
+        self.description = ""
+        self.url = ""
+        self.subscriber_count = 0
+        self.video_count = 0
+        self.view_count = 0
+        self.fetch_channel_info()
 
-    def fetch_channel_info(self) -> dict:
-        """Загрузка информации о канале через API"""
+    def fetch_channel_info(self) -> None:
+        """Загружает информацию о канале через API и заполняет атрибуты."""
         url = f"https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id={self.channel_id}&key={self.api_key}"
         response = requests.get(url)
         data = response.json()
-        return data
+
+        if "items" in data and len(data["items"]) > 0:
+            snippet = data["items"][0]["snippet"]
+            statistics = data["items"][0]["statistics"]
+
+            self.title = snippet["title"]
+            self.description = snippet["description"]
+            self.url = f"https://www.youtube.com/channel/{self.channel_id}"
+            self.subscriber_count = int(statistics["subscriberCount"])
+            self.video_count = int(statistics["videoCount"])
+            self.view_count = int(statistics["viewCount"])
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
-        channel_data = self.fetch_channel_info()
-        if "items" in channel_data and len(channel_data["items"]) > 0:
-            snippet = channel_data["items"][0]["snippet"]
-            statistics = channel_data["items"][0]["statistics"]
+        print("Информация о канале:")
+        print(f"Название: {self.title}")
+        print(f"Описание: {self.description}")
+        print(f"Ссылка на канал: {self.url}")
+        print(f"Количество подписчиков: {self.subscriber_count}")
+        print(f"Количество видео: {self.video_count}")
+        print(f"Общее количество просмотров: {self.view_count}")
 
-            print("Информация о канале:")
-            print(f"Название: {snippet['title']}")
-            print(f"Описание: {snippet['description']}")
-            print(f"Дата создания: {snippet['publishedAt']}")
-            print(f"Количество подписчиков: {statistics['subscriberCount']}")
-            print(f"Количество просмотров: {statistics['viewCount']}")
+    @classmethod
+    def get_service(cls):
+        """Возвращает объект для работы с YouTube API."""
+        api_key: str = os.getenv('YOUTUBE_API_KEY')
+        return build('youtube', 'v3', developerKey=api_key)
+
+    def to_json(self, filename: str) -> None:
+        """Сохраняет информацию о канале в JSON файл."""
+        channel_info = {
+            "title": self.title,
+            "description": self.description,
+            "url": self.url,
+            "subscriber_count": self.subscriber_count,
+            "video_count": self.video_count,
+            "view_count": self.view_count
+        }
+
+        with open(filename, "w") as file:
+            json.dump(channel_info, file, ensure_ascii=False, indent=2)
+
