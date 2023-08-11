@@ -7,17 +7,13 @@ class Channel:
     """Класс для ютуб-канала"""
 
 
+
+
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала.
         Дальше все данные будут подтягиваться по API."""
         self.channel_id = channel_id
         self.api_key = "AIzaSyDHgpl7lB3wLwo17yG67V1zkWbZnmm5pWI"
-        self.title = ""
-        self.description = ""
-        self.url = ""
-        self.subscriber_count = 0
-        self.video_count = 0
-        self.view_count = 0
         self.fetch_channel_info()
 
 
@@ -69,4 +65,71 @@ class Channel:
 
         with open(filename, "w") as file:
             json.dump(channel_info, file, ensure_ascii=False, indent=2)
+
+    def __str__(self):
+        """
+        Метод для вывода информации
+        о канале в виде строки
+        """
+        return f"{self.title} ({self.url})"
+
+    def __add__(self, other):
+        """
+        Метод для сложения
+        двух каналов по количеству подписчиков
+        """
+        return self.subscriber_count + other.subscriber_count
+
+    def __sub__(self, other):
+        """
+        Метод для вычитания количества
+        подписчиков другого канала из текущего
+        """
+        return self.subscriber_count - other.subscriber_count
+
+    def __lt__(self, other):
+        """
+        Метод для сравнения двух каналов
+        (меньше) по количеству подписчиков
+        """
+        return self.subscriber_count < other.subscriber_count
+
+    def __le__(self, other):
+        """
+        Метод для сравнения двух каналов
+        (меньше или равно) по количеству подписчиков
+        """
+        return self.subscriber_count <= other.subscriber_count
+
+    def __eq__(self, other):
+        """
+        Метод для сравнения двух каналов
+        (равно) по количеству подписчиков
+        """
+        return self.subscriber_count == other.subscriber_count
+
+    def __ne__(self, other):
+        """
+        Метод для сравнения двух каналов
+        (не равно) по количеству подписчиков
+        """
+        return self.subscriber_count != other.subscriber_count
+
+    def __gt__(self, other):
+        """
+        Метод для сравнения двух каналов
+        (больше) по количеству подписчиков
+        """
+        return self.subscriber_count > other.subscriber_count
+
+    def __ge__(self, other):
+        """Метод для сравнения двух каналов
+        (больше или равно) по количеству подписчиков
+        """
+        return self.subscriber_count >= other.subscriber_count
+
+
+
+
+
 
