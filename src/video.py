@@ -6,6 +6,8 @@ class Video:
         self.view_count = view_count
         self.like_count = like_count
 
+
+
 class PLVideo(Video):
     def __init__(self, video_id, playlist_id, title, video_link, view_count, like_count):
         super().__init__(video_id, title, video_link, view_count, like_count)
