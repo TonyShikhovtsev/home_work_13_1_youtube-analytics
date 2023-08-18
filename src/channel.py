@@ -52,6 +52,7 @@ class Channel:
         return build('youtube', 'v3', developerKey=api_key)
 
 
+
     def to_json(self, filename: str) -> None:
         """Сохраняет информацию о канале в JSON файл."""
         channel_info = {
