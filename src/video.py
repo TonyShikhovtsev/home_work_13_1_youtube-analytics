@@ -1,10 +1,14 @@
 from googleapiclient.discovery import build
 
 
+
 class Video:
 
     def __init__(self, video_id):
-        self.video_id = video_id
+        try:
+            self.video_id = video_id
+        except ValueError:
+            self.video_id = None
         self.fetch_video_info()
 
     def fetch_video_info(self):
