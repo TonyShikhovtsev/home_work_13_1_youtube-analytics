@@ -1,15 +1,31 @@
 from googleapiclient.discovery import build
 
+class BrokenVideoIdException:
+    def __init__(self, *args, **kwargs):
+        print('BrokenVideoIdException: Не верный ID')
 
 
 class Video:
+    youtube = build('youtube', 'v3', developerKey="AIzaSyDHgpl7lB3wLwo17yG67V1zkWbZnmm5pWI")
 
     def __init__(self, video_id):
+        self.video_id = video_id
         try:
-            self.video_id = video_id
-        except ValueError:
-            self.video_id = None
-        self.fetch_video_info()
+            video_response = self.youtube.videos().list(part='snippet, statistics, contentDetails, topicDetails', id=self.video_id).execute()
+
+            self.title = video_response['items'][0]['snippet']['title']
+            self.video_link = f"https://youtu.be/{self.video_id}"
+            self.view_count = video_response['items'][0]['statistics']['viewCount']
+            self.like_count = video_response['items'][0]['statistics']['likeCount']
+
+        except IndexError:
+            self.title = None
+            self.video_link = None
+            self.view_count = None
+            self.like_count = None
+
+
+
 
     def fetch_video_info(self):
         service = build('youtube', 'v3', developerKey="AIzaSyDHgpl7lB3wLwo17yG67V1zkWbZnmm5pWI")
